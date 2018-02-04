@@ -172,7 +172,14 @@ public class ItemChannelSettings extends DefaultChannelSettings implements IChan
                     IItemHandler handler = getItemHandlerAt(te, settings.getFacing());
                     if (handler != null) {
                         int idx = getStartExtractIndex(settings, consumerId, handler);
-                        idx = tickItemHandler(context, settings, handler, idx);
+                        try {
+                            idx = tickItemHandler(context, settings, handler, idx);
+                        } catch(Throwable t) {
+                            System.out.println("TileEntity and IItemHandler classes:");
+                            System.out.println(te.getClass().getName());
+                            System.out.println(handler.getClass().getName());
+                            throw t;
+                        }
                         if (handler.getSlots() > 0) {
                             rememberExtractIndex(consumerId, (idx + 1) % handler.getSlots());
                         }
