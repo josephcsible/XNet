@@ -141,7 +141,12 @@ public class FluidChannelSettings extends DefaultChannelSettings implements ICha
                         int remaining = insertFluidSimulate(inserted, context, stack);
                         if (!inserted.isEmpty()) {
                             if (context.checkAndConsumeRF(GeneralConfiguration.controllerOperationRFT)) {
-                                insertFluidReal(context, inserted, fetchFluid(handler, false, extractMatcher, stack.amount - remaining));
+                                int toextractreal = stack.amount - remaining;
+                                stack = fetchFluid(handler, false, extractMatcher, toextractreal);
+                                if (stack == null) {
+                                    throw new NullPointerException(handler.getClass().getName() + " misbehaved! handler.drain(" + toextractreal + ", true) returned null, even though handler.drain(" + toextract + ", false) did not");
+                                }
+                                insertFluidReal(context, inserted, stack);
                             }
                         }
                     }
